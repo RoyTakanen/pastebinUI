@@ -8,3 +8,8 @@ module.exports = withBundleAnalyzer({
     ignoreDuringBuilds: true,
   },
 });
+
+const removeImports = require("next-remove-imports")();
+module.exports = removeImports({
+  experimental: { esmExternals: true }
+});

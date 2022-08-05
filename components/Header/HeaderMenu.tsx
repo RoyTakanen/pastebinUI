@@ -1,3 +1,5 @@
+import { ColorSchemeToggle } from '../../components/ColorSchemeToggle/ColorSchemeToggle';
+
 import { createStyles, Header, Menu, Group, Center, Burger, Container } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
@@ -95,6 +97,7 @@ export function HeaderMenu({ links }: HeaderSearchProps) {
             {items}
           </Group>
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
+          <ColorSchemeToggle />
         </div>
       </Container>
     </Header>
