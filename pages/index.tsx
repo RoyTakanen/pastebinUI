@@ -5,6 +5,7 @@ import { StatsGroup } from '../components/Stats/Stats';
 import { Container, Space, Checkbox, TextInput, Button } from '@mantine/core';
 import { useState, useMemo } from 'react';
 import dynamic from "next/dynamic";
+import Router from "next/router";
 import hljs from 'highlight.js';
 import "@uiw/react-textarea-code-editor/dist.css";
 import { IconSend } from '@tabler/icons';
@@ -52,6 +53,7 @@ export default function HomePage() {
       });
 
   const [pasteValue, onPasteChange] = useState('');
+  const [titleValue, onTitleChange] = useState('');
   const [languageValue, onLanguageChange] = useState('js');
 
   const updatePaste = (code: string) => {
@@ -62,17 +64,28 @@ export default function HomePage() {
     onLanguageChange(highlightRes.language ? highlightRes.language : "js");
   };
 
-  // const createPaste = () => {
-  //   fetch("http://localhost:3001/metrics")
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       let newStats = structuredClone(stats);
-  //       newStats[0].stats = data.totalViews
-  //       newStats[1].stats = data.pasteCount.public
-  //       newStats[2].stats = data.pasteCount.private
-  //       setStats(newStats);
-  //     });
-  // }
+  const createPaste = async () => {
+    const data = {
+      "paste": pasteValue,
+      "title": titleValue,
+      "language": languageValue
+    }
+
+    const rawResponse = await fetch("http://localhost:3001/pastes", {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+
+    const content = await rawResponse.json();
+
+    Router.push(`/p/${content.id}`);
+
+    console.log(content)
+  }
 
   const randomNames = ["HTML ei käynnisty..."]
   const placeholderName = randomNames[Math.floor(Math.random()*randomNames.length)]
@@ -83,7 +96,7 @@ export default function HomePage() {
       <Welcome />
       <Space h="xl" />
       <Container>
-        <TextInput label="Liitteen nimi" placeholder={placeholderName}/>
+        <TextInput label="Liitteen nimi" placeholder={placeholderName} value={titleValue} onChange={(evn: any) => onTitleChange(evn.target.value)}/>
         <Space h="xl" />
         <CodeEditor
           value={pasteValue} 
@@ -100,9 +113,9 @@ export default function HomePage() {
           }}
         />
         <Space h="xl" />
-        <Checkbox label="Yksityinen" />
+        <Checkbox label="Yksityinen" /> (ei toimi)
         <Space h="xl" />
-        <Button leftIcon={<IconSend />} variant="gradient" gradient={{ from: 'indigo', to: 'cyan' }}>Lähetä liite!</Button>
+        <Button onClick={createPaste} leftIcon={<IconSend />} variant="gradient" gradient={{ from: 'indigo', to: 'cyan' }}>Lähetä liite!</Button>
         <Space h="xl" />
         <StatsGroup data={stats}/>
       </Container>
