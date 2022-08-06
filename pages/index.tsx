@@ -3,7 +3,7 @@ import { HeaderMenu } from '../components/Header/HeaderMenu';
 import { StatsGroup } from '../components/Stats/Stats';
 
 import { Container, Space, Checkbox, TextInput, Button } from '@mantine/core';
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from "next/dynamic";
 import Router from "next/router";
 import hljs from 'highlight.js';
@@ -55,20 +55,26 @@ export default function HomePage() {
   const [pasteValue, onPasteChange] = useState('');
   const [titleValue, onTitleChange] = useState('');
   const [languageValue, onLanguageChange] = useState('js');
+  const [privateValue, onPrivateChange] = useState(false);
 
-  const updatePaste = (code: string) => {
-    const highlightRes = hljs.highlightAuto(code);
-    console.log(highlightRes.language)
+    
+  // This slows the typing if it is run on every keypress
+  useEffect(() => {
+    const delayLanguageDetect = setTimeout(() => {
+      const highlightRes = hljs.highlightAuto(pasteValue);
+      console.log(highlightRes.language)  
+      onLanguageChange(highlightRes.language ? highlightRes.language : "html");
+    }, 1000)
 
-    onPasteChange(code);
-    onLanguageChange(highlightRes.language ? highlightRes.language : "js");
-  };
+    return () => clearTimeout(delayLanguageDetect)
+  }, [pasteValue])
 
   const createPaste = async () => {
     const data = {
       "paste": pasteValue,
       "title": titleValue,
-      "language": languageValue
+      "language": languageValue,
+      "private": privateValue,
     }
 
     const rawResponse = await fetch("http://localhost:3001/pastes", {
@@ -102,7 +108,7 @@ export default function HomePage() {
           value={pasteValue} 
           language={languageValue}
           placeholder="Syötä lokitiedostosi / koodipätkäsi / äidinkielen esseesi tähän kenttään jakaaksesi sen muille..."
-          onChange={(evn: any) => updatePaste(evn.target.value)}
+          onChange={(evn: any) => onPasteChange(evn.target.value)}
           padding={15}
           minHeight={300}
           style={{
@@ -113,7 +119,7 @@ export default function HomePage() {
           }}
         />
         <Space h="xl" />
-        <Checkbox label="Yksityinen" /> (ei toimi)
+        <Checkbox label="Yksityinen" value={privateValue} onClick={(event) => onPrivateChange(event.currentTarget.checked)} />
         <Space h="xl" />
         <Button onClick={createPaste} leftIcon={<IconSend />} variant="gradient" gradient={{ from: 'indigo', to: 'cyan' }}>Lähetä liite!</Button>
         <Space h="xl" />

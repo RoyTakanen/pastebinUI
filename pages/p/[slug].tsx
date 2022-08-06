@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { Prism } from '@mantine/prism';
 import { useRouter } from 'next/router'
 import { showNotification } from '@mantine/notifications';
-import { IconX, IconEye, IconFileDigit, IconCalendar } from '@tabler/icons';
+import { IconX, IconEye, IconEyeOff, IconFileDigit, IconCalendar, IconCode } from '@tabler/icons';
 
 export default function Paste() {
   const router = useRouter()
@@ -53,6 +53,8 @@ export default function Paste() {
         } else {
             let newPaste = structuredClone(paste);
             newPaste = data
+            newPaste.programmingLanguage = newPaste.programmingLanguage ? newPaste.programmingLanguage : "tsx";
+            newPaste.programmingLanguage = newPaste.programmingLanguage == ('csharp') ? "c" : newPaste.programmingLanguage
             setPaste(newPaste);
             setLoadPaste(true);
         }
@@ -71,7 +73,7 @@ export default function Paste() {
               })
         } else {
             let newLatest = structuredClone(latest);
-            newLatest = data
+            newLatest = data;
             setLatest(newLatest);
             setLoadLatest(true);
         }
@@ -92,17 +94,20 @@ export default function Paste() {
             </Skeleton>
             <Space h="xl" />
             <Text size="sm" color="dimmed" sx={{ display: "flex", gap: 8 }}>
-              <IconEye /> {paste.meta.views} 
+              {paste.hidden == true? <IconEyeOff />: <IconEye /> }
+               {paste.meta.views} 
               {' '}
               <IconFileDigit /> {paste.meta.size} tavua
               {' '}
               <IconCalendar /> {(new Date(paste.date)).toLocaleDateString('fi-FI')}
+              {' '}
+              <IconCode /> {paste.programmingLanguage}
             </Text>
             <Divider my="sm" />
             <Space h="xl" />
             <Skeleton visible={!loadPaste}>
                 <Prism 
-                  language="tsx" 
+                  language={paste.programmingLanguage} 
                   copiedLabel="Kopioitu!" 
                   copyLabel="Kopioi" 
                   radius="sm" 
