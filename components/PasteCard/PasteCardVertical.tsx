@@ -46,13 +46,11 @@ export function PasteCardVertical({
           <Text transform="uppercase" color="dimmed" weight={700} size="xs">
             {language}
           </Text>
-          <Link href={link} passHref>
-            <Anchor component="a">
+            <Anchor href={link} component="a">
               <Text className={classes.title} mt="xs" mb="md">
                 {title}
               </Text>
             </Anchor>
-          </Link>
           <Group noWrap spacing="xs">
             <Group spacing="xs" noWrap>
               <Avatar size={20} src={author.avatar} />

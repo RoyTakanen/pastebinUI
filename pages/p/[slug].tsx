@@ -1,6 +1,7 @@
 import { ColorSchemeToggle } from '../../components/ColorSchemeToggle/ColorSchemeToggle';
 import { HeaderMenu } from '../../components/Header/HeaderMenu';
 import { PasteCardVertical } from '../../components/PasteCard/PasteCardVertical';
+import { ErrorNotFound } from '../../components/ErrorNotFound/ErrorNotFound';
 
 import { Container, Title, Skeleton, Space, Divider, Grid, Text, Stack } from '@mantine/core';
 import { useState } from 'react';
@@ -12,8 +13,10 @@ import { IconX, IconEye, IconEyeOff, IconFileDigit, IconCalendar, IconCode } fro
 export default function Paste() {
   const router = useRouter()
   const links = [
-    { link: "/", label: "Koti" },
-    { link: "string", label: "string" }
+    { link: "/", label: "Koti - Luo liite" },
+    { link: "/info", label: "Tietoa meistä" },
+    { link: "/new", label: "Uusimmat" },
+    { link: "/pop", label: "Suosituimmat" }
   ]
 
   let pasteDefault = {
@@ -35,14 +38,16 @@ export default function Paste() {
   ]
 
   const [paste, setPaste] = useState(pasteDefault);
-  const [loadPaste, setLoadPaste] = useState(false);
   const [latest, setLatest] = useState(latestDefault);
+  const [loadPaste, setLoadPaste] = useState(false);
   const [loadLatest, setLoadLatest] = useState(false);
+  const [pasteFound, setPasteFound] = useState(false);
 
   if (!loadPaste)
     fetch(`http://localhost:3001/pastes/${router.query.slug}`)
       .then(response => response.json())
       .then(data => {
+        setLoadPaste(true); // This has to be here to avoid double fetch
         if (data.error) {
             showNotification({
                 color: "red",
@@ -56,7 +61,7 @@ export default function Paste() {
             newPaste.programmingLanguage = newPaste.programmingLanguage ? newPaste.programmingLanguage : "tsx";
             newPaste.programmingLanguage = newPaste.programmingLanguage == ('csharp') ? "c" : newPaste.programmingLanguage
             setPaste(newPaste);
-            setLoadPaste(true);
+            setPasteFound(true);
         }
       });
 
@@ -83,54 +88,68 @@ export default function Paste() {
     "name": "tuntematon",
     "avatar": "https://images.unsplash.com/photo-1534294668821-28a3054f4256?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
   }
+
+  function PastePage() {
+    return (
+      <>
+        <Container px={0}>
+          <Grid gutter="xl">
+            <Grid.Col span={8}>
+              <Skeleton visible={!loadPaste}>
+                <Title order={2}>{paste.title}</Title>
+              </Skeleton>
+              <Space h="xl" />
+              <Text size="sm" color="dimmed" sx={{ display: "flex", gap: 8 }}>
+                {paste.hidden == true ? <IconEyeOff />: <IconEye /> }
+                 {paste.meta.views} 
+                {' '}
+                <IconFileDigit /> {paste.meta.size} tavua
+                {' '}
+                <IconCalendar /> {(new Date(paste.date)).toLocaleDateString('fi-FI')}
+                {' '}
+                <IconCode /> {paste.programmingLanguage}
+              </Text>
+              <Divider my="sm" />
+              <Space h="xl" />
+              <Skeleton visible={!loadPaste}>
+                  <Prism 
+                    language={paste.programmingLanguage} 
+                    copiedLabel="Kopioitu!" 
+                    copyLabel="Kopioi" 
+                    radius="sm" 
+                    withLineNumbers={true}>{paste.content}</Prism>
+              </Skeleton>
+            </Grid.Col>
+            <Grid.Col span={4}>
+              <Title order={3}>Uusimmat:</Title>
+              <Space h="xl" />
+              <Stack>
+                {latest.map((latestPaste) =>
+                  <PasteCardVertical
+                    language={latestPaste.programmingLanguage ? latestPaste.programmingLanguage : "teksti"} 
+                    title={latestPaste.title ? latestPaste.title : "Nimetön..."}
+                    date={(new Date(latestPaste.date)).toLocaleDateString('fi-FI')} 
+                    author={author}
+                    id={latestPaste.id} />
+                )}
+              </Stack>
+            </Grid.Col>
+          </Grid>
+        </Container>
+      </>
+    );
+  }
+
+  function Page() {
+    if (pasteFound)
+     return <PastePage />
+    return <ErrorNotFound />
+  }
+
   return (
-    <>
-      <HeaderMenu links={links} />
-      <Container px={0}>
-        <Grid gutter="xl">
-          <Grid.Col span={8}>
-            <Skeleton visible={!loadPaste}>
-              <Title order={2}>{paste.title}</Title>
-            </Skeleton>
-            <Space h="xl" />
-            <Text size="sm" color="dimmed" sx={{ display: "flex", gap: 8 }}>
-              {paste.hidden == true? <IconEyeOff />: <IconEye /> }
-               {paste.meta.views} 
-              {' '}
-              <IconFileDigit /> {paste.meta.size} tavua
-              {' '}
-              <IconCalendar /> {(new Date(paste.date)).toLocaleDateString('fi-FI')}
-              {' '}
-              <IconCode /> {paste.programmingLanguage}
-            </Text>
-            <Divider my="sm" />
-            <Space h="xl" />
-            <Skeleton visible={!loadPaste}>
-                <Prism 
-                  language={paste.programmingLanguage} 
-                  copiedLabel="Kopioitu!" 
-                  copyLabel="Kopioi" 
-                  radius="sm" 
-                  withLineNumbers={true}
-                  trim={false} >{paste.content}</Prism>
-            </Skeleton>
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <Title order={3}>Uusimmat:</Title>
-            <Space h="xl" />
-            <Stack>
-              {latest.map((latestPaste) =>
-                <PasteCardVertical
-                  language={latestPaste.language ? latestPaste.language : "teksti"} 
-                  title={latestPaste.title ? latestPaste.title : "Nimetön..."}
-                  date={(new Date(latestPaste.date)).toLocaleDateString('fi-FI')} 
-                  author={author}
-                  id={latestPaste.id} />
-              )}
-            </Stack>
-          </Grid.Col>
-        </Grid>
-      </Container>
-    </>
-  );
+   <>
+    <HeaderMenu links={links} />
+    <Page />
+   </>
+  )
 }
