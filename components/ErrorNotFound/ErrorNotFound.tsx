@@ -1,4 +1,4 @@
-import { createStyles, Title, Text, Button, Container, Group } from '@mantine/core';
+import { createStyles, Title, Text, Container } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -46,7 +46,8 @@ export function ErrorNotFound() {
       <div className={classes.label}>404</div>
       <Title className={classes.title}>Liitettä ei ole olemassa.</Title>
       <Text color="dimmed" size="lg" align="center" className={classes.description}>
-        Valitettavasti tätä liitettä ei löydy palvelimiltamme. Se on saatettu poistaa tai sitä ei ole koskaan ollut. 
+        Valitettavasti tätä liitettä ei löydy palvelimiltamme. Se on saatettu poistaa tai sitä ei
+        ole koskaan ollut.
       </Text>
       {/* <Group position="center">
         <Button variant="subtle" size="md">

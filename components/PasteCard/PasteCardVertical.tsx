@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { createStyles, Card, Avatar, Text, Group, Anchor } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
@@ -28,16 +27,10 @@ interface PasteCardVerticalProps {
   id: string;
 }
 
-export function PasteCardVertical({
-  language,
-  title,
-  date,
-  author,
-  id,
-}: PasteCardVerticalProps) {
+export function PasteCardVertical({ language, title, date, author, id }: PasteCardVerticalProps) {
   const { classes } = useStyles();
 
-  const link = "/p/" + id
+  const link = `/p/${id}`;
 
   return (
     <Card withBorder radius="md" p={0} className={classes.card}>
@@ -46,11 +39,11 @@ export function PasteCardVertical({
           <Text transform="uppercase" color="dimmed" weight={700} size="xs">
             {language}
           </Text>
-            <Anchor href={link} component="a">
-              <Text className={classes.title} mt="xs" mb="md">
-                {title}
-              </Text>
-            </Anchor>
+          <Anchor href={link} component="a">
+            <Text className={classes.title} mt="xs" mb="md">
+              {title}
+            </Text>
+          </Anchor>
           <Group noWrap spacing="xs">
             <Group spacing="xs" noWrap>
               <Avatar size={20} src={author.avatar} />

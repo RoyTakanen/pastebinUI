@@ -1,7 +1,7 @@
-import { ColorSchemeToggle } from '../../components/ColorSchemeToggle/ColorSchemeToggle';
-
 import { createStyles, Header, Menu, Group, Center, Burger, Container } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+
+import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle';
 
 const useStyles = createStyles((theme) => ({
   inner: {
@@ -77,11 +77,7 @@ export function HeaderMenu({ links }: HeaderSearchProps) {
     }
 
     return (
-      <a
-        key={link.label}
-        href={link.link}
-        className={classes.link}
-      >
+      <a key={link.label} href={link.link} className={classes.link}>
         {link.label}
       </a>
     );
