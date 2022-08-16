@@ -11,6 +11,7 @@ import { HeaderMenu } from '../components/Header/HeaderMenu';
 import { StatsGroup } from '../components/Stats/Stats';
 
 const CodeEditor = dynamic(
+  // @ts-ignore
   () => import('@uiw/react-textarea-code-editor').then((mod) => mod.default),
   { ssr: false }
 );
