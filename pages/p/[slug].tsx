@@ -26,14 +26,12 @@ interface PasteValue {
 
 export default function Paste() {
   const router = useRouter();
-  const links = {
-    links: [
-      { link: '/', label: 'Koti - Luo liite' },
-      { link: '/info', label: 'Tietoa meistä' },
-      { link: '/new', label: 'Uusimmat' },
-      { link: '/pop', label: 'Suosituimmat' },
-    ],
-  };
+  const links = [
+    { link: '/', label: 'Koti - Luo liite' },
+    { link: '/info', label: 'Tietoa meistä' },
+    { link: '/new', label: 'Uusimmat' },
+    { link: '/pop', label: 'Suosituimmat' },
+  ];
 
   const pasteDefault: PasteValue = {
     content: 'Ladataan...\n\n\n\n\n\nKestää hetken...',
@@ -63,7 +61,7 @@ export default function Paste() {
   const [loadLatest, setLoadLatest] = useState(false);
   const [pasteFound, setPasteFound] = useState(false);
   if (!loadPaste) {
-    fetch(`http://localhost:3001/pastes/${router.query.slug}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/pastes/${router.query.slug}`)
       .then((response) => response.json())
       .then((data) => {
         setLoadPaste(true); // This has to be here to avoid double fetch
@@ -92,7 +90,7 @@ export default function Paste() {
       });
   }
   if (!loadLatest) {
-    fetch('http://localhost:3001/pastes?sorting=-date')
+    fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/pastes?sorting=-date`)
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {

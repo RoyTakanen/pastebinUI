@@ -17,8 +17,10 @@ const CodeEditor = dynamic(
 
 export default function HomePage() {
   const links = [
-    { link: '/', label: 'Koti', links: [] },
-    { link: 'string', label: 'string', links: [] },
+    { link: '/', label: 'Koti - Luo liite' },
+    { link: '/info', label: 'Tietoa meistä' },
+    { link: '/new', label: 'Uusimmat' },
+    { link: '/pop', label: 'Suosituimmat' },
   ];
 
   let statsFetched = false;
@@ -42,7 +44,7 @@ export default function HomePage() {
 
   const [stats, setStats] = useState(statsDefault);
   if (!statsFetched) {
-    fetch('http://localhost:3001/metrics')
+    fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/metrics`)
       .then((response) => response.json())
       .then((data) => {
         const newStats = structuredClone(stats);
@@ -77,7 +79,7 @@ export default function HomePage() {
       private: privateValue,
     };
 
-    const rawResponse = await fetch('http://localhost:3001/pastes', {
+    const rawResponse = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/pastes`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
