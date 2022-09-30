@@ -23,7 +23,6 @@ export default function HomePage() {
     { link: '/pop', label: 'Suosituimmat' },
   ];
 
-  let statsFetched = false;
   const statsDefault = [
     {
       title: 'Katselukertaa yhteensä',
@@ -43,6 +42,7 @@ export default function HomePage() {
   ];
 
   const [stats, setStats] = useState(statsDefault);
+  const [statsFetched, setStatsFetched] = useState(false);
   if (!statsFetched) {
     fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/metrics`)
       .then((response) => response.json())
@@ -52,7 +52,7 @@ export default function HomePage() {
         newStats[1].stats = data.pasteCount.public;
         newStats[2].stats = data.pasteCount.private;
         setStats(newStats);
-        statsFetched = true;
+        setStatsFetched(true);
       });
   }
 
