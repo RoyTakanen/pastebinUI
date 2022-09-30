@@ -9,23 +9,42 @@ import { HeaderMenu } from '../../components/Header/HeaderMenu';
 import { PasteCardVertical } from '../../components/PasteCard/PasteCardVertical';
 import { ErrorNotFound } from '../../components/ErrorNotFound/ErrorNotFound';
 
+const Languages = ['go', 'markup', 'bash', 'clike', 'c', 'cpp', 'css', 'javascript', 'jsx', 'coffeescript', 'actionscript', 'css-extr', 'diff', 'git', 'graphql', 'handlebars', 'json', 'less', 'makefile', 'markdown', 'objectivec', 'ocaml', 'python', 'reason', 'sass', 'scss', 'sql', 'stylus', 'tsx', 'typescript', 'wasm', 'yaml'];
+export type Language = typeof Languages[number];
+
+interface PasteValue {
+  content: string,
+  title: string,
+  programmingLanguage: Language,
+  meta: {
+    views: number,
+    size: number,
+  },
+  hidden: boolean,
+  date: string
+}
+
 export default function Paste() {
   const router = useRouter();
-  const links = [
-    { link: '/', label: 'Koti - Luo liite' },
-    { link: '/info', label: 'Tietoa meistä' },
-    { link: '/new', label: 'Uusimmat' },
-    { link: '/pop', label: 'Suosituimmat' },
-  ];
+  const links = {
+    links: [
+      { link: '/', label: 'Koti - Luo liite' },
+      { link: '/info', label: 'Tietoa meistä' },
+      { link: '/new', label: 'Uusimmat' },
+      { link: '/pop', label: 'Suosituimmat' },
+    ],
+  };
 
-  const pasteDefault = {
+  const pasteDefault: PasteValue = {
     content: 'Ladataan...\n\n\n\n\n\nKestää hetken...',
     title: 'Ladataan...',
-    programmingLanguage: 'Python',
+    programmingLanguage: 'python',
     meta: {
       views: 0,
       size: 0,
     },
+    hidden: false,
+    date: '2022-08-04T12:57:22.810Z',
   };
 
   const latestDefault = [
@@ -38,7 +57,7 @@ export default function Paste() {
     },
   ];
 
-  const [paste, setPaste] = useState(pasteDefault);
+  const [paste, setPaste] = useState(pasteDefault as PasteValue);
   const [latest, setLatest] = useState(latestDefault);
   const [loadPaste, setLoadPaste] = useState(false);
   const [loadLatest, setLoadLatest] = useState(false);
@@ -121,6 +140,7 @@ export default function Paste() {
               <Space h="xl" />
               <Skeleton visible={!loadPaste}>
                 <Prism
+                  // @ts-ignore
                   language={paste.programmingLanguage}
                   copiedLabel="Kopioitu!"
                   copyLabel="Kopioi"
@@ -162,7 +182,7 @@ export default function Paste() {
 
   return (
     <>
-
+      {/* @ts-ignore */}
       <HeaderMenu links={links} />
       <Page />
     </>

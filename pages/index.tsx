@@ -11,7 +11,7 @@ import { HeaderMenu } from '../components/Header/HeaderMenu';
 import { StatsGroup } from '../components/Stats/Stats';
 
 const CodeEditor = dynamic(
-  () => import('@uiw/react-textarea-code-editor').then((mod) => mod.default),
+  () => import('@uiw/react-textarea-code-editor').then((mod) => mod.default) as any,
   { ssr: false }
 );
 
@@ -21,26 +21,27 @@ export default function HomePage() {
     { link: 'string', label: 'string', links: [] },
   ];
 
+  let statsFetched = false;
   const statsDefault = [
     {
       title: 'Katselukertaa yhteensä',
-      stats: 0,
+      stats: '0',
       description: 'Kaikki liitteiden keräämät katselukerrat yhteensä.',
     },
     {
       title: 'Julkista liitettä',
-      stats: 0,
+      stats: '0',
       description: 'Hakukoneissa ja listauksissa näkyvät liitteet.',
     },
     {
       title: 'Yksityistä liitettä',
-      stats: 0,
+      stats: '0',
       description: 'Yksityisten liitteiden määrä (haussa näkymättömät liitteet).',
     },
   ];
 
   const [stats, setStats] = useState(statsDefault);
-  if (stats[0].stats < 1) {
+  if (!statsFetched) {
     fetch('http://localhost:3001/metrics')
       .then((response) => response.json())
       .then((data) => {
@@ -49,6 +50,7 @@ export default function HomePage() {
         newStats[1].stats = data.pasteCount.public;
         newStats[2].stats = data.pasteCount.private;
         setStats(newStats);
+        statsFetched = true;
       });
   }
 
@@ -89,9 +91,6 @@ export default function HomePage() {
     Router.push(`/p/${content.id}`);
   };
 
-  const randomNames = ['HTML ei käynnisty...'];
-  const placeholderName = randomNames[Math.floor(Math.random() * randomNames.length)];
-
   return (
     <>
       <HeaderMenu links={links} />
@@ -100,15 +99,16 @@ export default function HomePage() {
       <Container>
         <TextInput
           label="Liitteen nimi"
-          placeholder={placeholderName}
+          placeholder="HTML ei käynnisty..."
           value={titleValue}
           onChange={(evn: any) => onTitleChange(evn.target.value)}
         />
         <Space h="xl" />
         <CodeEditor
-          value={pasteValue}
-          language={languageValue}
+          // @ts-ignore
           placeholder="Syötä lokitiedostosi / koodipätkäsi / äidinkielen esseesi tähän kenttään jakaaksesi sen muille..."
+          language={languageValue}
+          value={pasteValue}
           onChange={(evn: any) => onPasteChange(evn.target.value)}
           padding={15}
           minHeight={300}
@@ -122,7 +122,7 @@ export default function HomePage() {
         <Space h="xl" />
         <Checkbox
           label="Yksityinen"
-          value={privateValue}
+          checked={privateValue}
           onClick={(event) => onPrivateChange(event.currentTarget.checked)}
         />
         <Space h="xl" />
