@@ -26,6 +26,7 @@ const useStyles = createStyles((theme) => ({
  *
  * @return Formatted string.
  */
+/* eslint-disable no-param-reassign */
 const humanFileSize = (bytes: number, si: boolean = false, dp: number = 1) => {
   const thresh = si ? 1000 : 1024;
 
@@ -41,7 +42,7 @@ const humanFileSize = (bytes: number, si: boolean = false, dp: number = 1) => {
 
   do {
     bytes /= thresh;
-    ++u;
+    u += 1;
   } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
 
   return `${bytes.toFixed(dp)} ${units[u]}`;
