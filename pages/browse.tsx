@@ -1,4 +1,4 @@
-import { Container, Title, Select, Checkbox, Stack } from '@mantine/core';
+import { Container, Title, Select, Checkbox, Stack, Group } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { IconX, IconArrowsSort } from '@tabler/icons';
@@ -67,24 +67,37 @@ export default function Paste() {
     return (
       <>
         <Container px={0}>
-            <Select
-              transition="pop-top-left"
-              transitionDuration={80}
-              transitionTimingFunction="ease"
-              value={sorting}
-              onChange={setSorting}
-              label="Lajitteluperuste"
-              placeholder="Valitse yksi"
-              icon={<IconArrowsSort size={14} />}
-              defaultValue="meta.views"
-              data={[
-                { value: 'meta.views', label: 'Katselukerrat' },
-                { value: 'meta.size', label: 'Koko' },
-                { value: 'date', label: 'Päivämäärä' },
-            ]}
-            />
-            <Checkbox label="Käänteinen" checked={inverted} onChange={(event) => setInverted(event.currentTarget.checked)} />
-            <Stack mt={15}>
+            <Title>Selaa liitteitä</Title>
+            <Group mb="xs">
+            <Container size="sm" sx={{ flex: 1 }}>
+                <Select
+                  mt={20}
+                  transition="pop-top-left"
+                  transitionDuration={80}
+                  transitionTimingFunction="ease"
+                  value={sorting}
+                  onChange={setSorting}
+                  label="Lajitteluperuste"
+                  placeholder="Valitse yksi"
+                  icon={<IconArrowsSort size={14} />}
+                  defaultValue="meta.views"
+                  data={[
+                    { value: 'meta.views', label: 'Katselukerrat' },
+                    { value: 'meta.size', label: 'Koko' },
+                    { value: 'date', label: 'Päivämäärä' },
+                ]}
+                />
+
+            </Container>
+            <Container size="sm" pr={90} mt={40}>
+                <Checkbox
+                  label="Käänteinen"
+                  checked={inverted}
+                  onChange={(event) => setInverted(event.currentTarget.checked)}
+                />
+            </Container>
+            </Group>
+            <Stack mt={40}>
                     {latest.map((latestPaste) => (
                     <PasteCardVertical
                       language={
