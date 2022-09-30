@@ -95,6 +95,7 @@ export default function HomePage() {
 
   return (
     <>
+      {/* @ts-ignore */}
       <HeaderMenu links={links} />
       <Welcome />
       <Space h="xl" />
