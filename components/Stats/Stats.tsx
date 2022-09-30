@@ -8,6 +8,9 @@ const useStyles = createStyles((theme) => ({
     } 100%)`,
     padding: theme.spacing.xl * 1.5,
     borderRadius: theme.radius.md,
+    // As long as the stat container serves footer purposes this is required
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
 
     [theme.fn.smallerThan('sm')]: {
       flexDirection: 'column',
