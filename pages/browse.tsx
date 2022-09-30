@@ -20,6 +20,10 @@ export default function Paste() {
       title: 'Python-esimerkki',
       language: 'python',
       id: 'XXXXXX',
+      meta: {
+        size: 1,
+        views: 1,
+      },
     },
   ];
 
@@ -108,6 +112,8 @@ export default function Paste() {
                       date={new Date(latestPaste.date).toLocaleDateString('fi-FI')}
                       author={author}
                       id={latestPaste.id}
+                      size={latestPaste.meta.size}
+                      views={latestPaste.meta.views}
                     />
                     ))}
             </Stack>
