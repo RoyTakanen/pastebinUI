@@ -28,9 +28,8 @@ export default function Paste() {
   const router = useRouter();
   const links = [
     { link: '/', label: 'Koti - Luo liite' },
+    { link: '/browse', label: 'Selaa liitteitä' },
     { link: '/info', label: 'Tietoa meistä' },
-    { link: '/new', label: 'Uusimmat' },
-    { link: '/pop', label: 'Suosituimmat' },
   ];
 
   const pasteDefault: PasteValue = {
