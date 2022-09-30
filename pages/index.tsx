@@ -11,15 +11,14 @@ import { HeaderMenu } from '../components/Header/HeaderMenu';
 import { StatsGroup } from '../components/Stats/Stats';
 
 const CodeEditor = dynamic(
-  // @ts-ignore
   () => import('@uiw/react-textarea-code-editor').then((mod) => mod.default),
   { ssr: false }
 );
 
 export default function HomePage() {
   const links = [
-    { link: '/', label: 'Koti' },
-    { link: 'string', label: 'string' },
+    { link: '/', label: 'Koti', links: [] },
+    { link: 'string', label: 'string', links: [] },
   ];
 
   const statsDefault = [
@@ -62,7 +61,6 @@ export default function HomePage() {
   useEffect(() => {
     const delayLanguageDetect = setTimeout(() => {
       const highlightRes = hljs.highlightAuto(pasteValue);
-      console.log(highlightRes.language);
       onLanguageChange(highlightRes.language ? highlightRes.language : 'html');
     }, 1000);
 
@@ -89,8 +87,6 @@ export default function HomePage() {
     const content = await rawResponse.json();
 
     Router.push(`/p/${content.id}`);
-
-    console.log(content);
   };
 
   const randomNames = ['HTML ei käynnisty...'];
@@ -139,6 +135,7 @@ export default function HomePage() {
           Lähetä liite!
         </Button>
         <Space h="xl" />
+
         <StatsGroup data={stats} />
       </Container>
     </>

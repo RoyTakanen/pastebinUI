@@ -21,8 +21,10 @@ export default function Paste() {
   const pasteDefault = {
     content: 'Ladataan...\n\n\n\n\n\nKestää hetken...',
     title: 'Ladataan...',
+    programmingLanguage: 'Python',
     meta: {
       views: 0,
+      size: 0,
     },
   };
 
@@ -56,14 +58,14 @@ export default function Paste() {
         } else {
           let newPaste = structuredClone(paste);
           newPaste = data;
-          // @ts-ignore
+
           newPaste.programmingLanguage = newPaste.programmingLanguage
-            // @ts-ignore
+
             ? newPaste.programmingLanguage
             : 'tsx';
-          // @ts-ignore
+
           newPaste.programmingLanguage =
-            // @ts-ignore
+
             newPaste.programmingLanguage === 'csharp' ? 'c' : newPaste.programmingLanguage;
           setPaste(newPaste);
           setPasteFound(true);
@@ -107,19 +109,18 @@ export default function Paste() {
               </Skeleton>
               <Space h="xl" />
               <Text size="sm" color="dimmed" sx={{ display: 'flex', gap: 8 }}>
-                {/* @ts-ignore */}
+
                 {paste.hidden === true ? <IconEyeOff /> : <IconEye />}
                 {paste.meta.views} <IconFileDigit /> {paste.meta.size} tavua <IconCalendar />{' '}
-                {/* @ts-ignore */}
+
                 {new Date(paste.date).toLocaleDateString('fi-FI')} <IconCode />{' '}
-                {/* @ts-ignore */}
+
                 {paste.programmingLanguage}
               </Text>
               <Divider my="sm" />
               <Space h="xl" />
               <Skeleton visible={!loadPaste}>
                 <Prism
-                  {/* @ts-ignore */}
                   language={paste.programmingLanguage}
                   copiedLabel="Kopioitu!"
                   copyLabel="Kopioi"
@@ -161,7 +162,7 @@ export default function Paste() {
 
   return (
     <>
-      {/* @ts-ignore */}
+
       <HeaderMenu links={links} />
       <Page />
     </>
