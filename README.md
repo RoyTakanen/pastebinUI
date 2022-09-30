@@ -2,6 +2,12 @@
 
 Simple frontend for [pastebin.fi](https://pastebin.fi) made with `next.js`.
 
+## TODO:
+
+- [ ] search bar to `/browse` (just get request to https://api.pastebin.fi/pastes?title=test and https://api.pastebin.fi/pastes?content=test)
+- [ ] pagination to `/browse`
+- [ ] fix code editor dark mode https://www.npmjs.com/package/@uiw/react-textarea-code-editor
+
 ## Development
 
 Install dependencies:
