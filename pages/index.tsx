@@ -1,4 +1,4 @@
-import { Container, Space, Checkbox, TextInput, Button, Alert } from '@mantine/core';
+import { Container, Space, Checkbox, TextInput, Button, Alert, LoadingOverlay } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Router from 'next/router';
@@ -80,6 +80,7 @@ export default function HomePage() {
   const [titleValue, onTitleChange] = useState('');
   const [languageValue, onLanguageChange] = useState('js');
   const [privateValue, onPrivateChange] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   // This slows the typing if it is run on every keypress
   useEffect(() => {
@@ -110,6 +111,8 @@ export default function HomePage() {
 
     const content = await rawResponse.json();
 
+    setUploading(true); // toggles loading overlay
+
     Router.push(`/p/${content.id}`);
   };
 
@@ -119,7 +122,8 @@ export default function HomePage() {
       <HeaderMenu links={links} />
       <Welcome />
       <Space h="xl" />
-      <Container>
+      <Container style={{ position: 'relative' }}>
+        <LoadingOverlay visible={uploading} overlayBlur={2} />
         <TextInput
           label="Liitteen nimi"
           placeholder="HTML ei käynnisty..."
