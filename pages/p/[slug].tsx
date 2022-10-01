@@ -219,7 +219,7 @@ export default function Paste() {
 
   return (
     <>
-      <LoadingOverlay visible={!pasteFound} overlayBlur={5} />;
+      <LoadingOverlay visible={!pasteFound} overlayBlur={5} />
       <Page />
     </>
   );
