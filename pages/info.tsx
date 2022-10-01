@@ -1,18 +1,11 @@
-import { Container, Title, Select, Checkbox, Stack, Group } from '@mantine/core';
-import { useState, useEffect } from 'react';
+import { Checkbox, Container, Group, Select, Stack, Title } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { IconX, IconArrowsSort } from '@tabler/icons';
+import { IconArrowsSort, IconX } from '@tabler/icons';
+import { useEffect, useState } from 'react';
 
-import { HeaderMenu } from '../components/Header/HeaderMenu';
 import { PasteCardVertical } from '../components/PasteCard/PasteCardVertical';
 
 export default function Paste() {
-  const links = [
-    { link: '/', label: 'Koti - Luo liite' },
-    { link: '/browse', label: 'Selaa liitteitä' },
-    { link: '/info', label: 'Tietoa meistä' },
-  ];
-
   const latestDefault = [
     {
       author: 'Tuntematon Sotilas',
@@ -32,23 +25,23 @@ export default function Paste() {
 
   const fetchPastes = (sorting: string, inverted: boolean) => {
     fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/pastes?sorting=${inverted ? '-' : ''}${sorting}`)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.error) {
-        showNotification({
-          color: 'red',
-          message: data.error,
-          disallowClose: true,
-          icon: <IconX size={20} />,
-        });
-      } else {
-        let newLatest = structuredClone(latest);
-        newLatest = data;
-        setLatest(newLatest);
-        setLoadLatest(true);
-      }
-    });
-};
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          showNotification({
+            color: 'red',
+            message: data.error,
+            disallowClose: true,
+            icon: <IconX size={20} />,
+          });
+        } else {
+          let newLatest = structuredClone(latest);
+          newLatest = data;
+          setLatest(newLatest);
+          setLoadLatest(true);
+        }
+      });
+  };
 
   if (!loadLatest) {
     fetchPastes('meta.views', true);
@@ -67,66 +60,55 @@ export default function Paste() {
     fetchPastes(sorting != null ? sorting : '', inverted);
   }, [sorting, inverted]);
 
-  function BrowsePage() {
-    return (
-      <>
-        <Container px={0}>
-            <Title>Selaa liitteitä</Title>
-            <Group mb="xs">
-            <Container size="sm" sx={{ flex: 1 }}>
-                <Select
-                  mt={20}
-                  transition="pop-top-left"
-                  transitionDuration={80}
-                  transitionTimingFunction="ease"
-                  value={sorting}
-                  onChange={setSorting}
-                  label="Lajitteluperuste"
-                  placeholder="Valitse yksi"
-                  icon={<IconArrowsSort size={14} />}
-                  defaultValue="meta.views"
-                  data={[
-                    { value: 'meta.views', label: 'Katselukerrat' },
-                    { value: 'meta.size', label: 'Koko' },
-                    { value: 'date', label: 'Päivämäärä' },
-                ]}
-                />
-
-            </Container>
-            <Container size="sm" pr={90} mt={40}>
-                <Checkbox
-                  label="Käänteinen"
-                  checked={inverted}
-                  onChange={(event) => setInverted(event.currentTarget.checked)}
-                />
-            </Container>
-            </Group>
-            <Stack mt={40}>
-                    {latest.map((latestPaste) => (
-                    <PasteCardVertical
-                      language={
-                        /* @ts-ignore */
-                        latestPaste.programmingLanguage ? latestPaste.programmingLanguage : 'teksti'
-                        }
-                      title={latestPaste.title ? latestPaste.title : 'Nimetön...'}
-                      date={new Date(latestPaste.date).toLocaleDateString('fi-FI')}
-                      author={author}
-                      id={latestPaste.id}
-                      size={latestPaste.meta.size}
-                      views={latestPaste.meta.views}
-                    />
-                    ))}
-            </Stack>
-        </Container>
-      </>
-    );
-  }
-
   return (
     <>
-      {/* @ts-ignore */}
-      <HeaderMenu links={links} />
-      <BrowsePage />
+      <Container px={0}>
+        <Title>Selaa liitteitä</Title>
+        <Group mb="xs">
+          <Container size="sm" sx={{ flex: 1 }}>
+            <Select
+              mt={20}
+              transition="pop-top-left"
+              transitionDuration={80}
+              transitionTimingFunction="ease"
+              value={sorting}
+              onChange={setSorting}
+              label="Lajitteluperuste"
+              placeholder="Valitse yksi"
+              icon={<IconArrowsSort size={14} />}
+              defaultValue="meta.views"
+              data={[
+                { value: 'meta.views', label: 'Katselukerrat' },
+                { value: 'meta.size', label: 'Koko' },
+                { value: 'date', label: 'Päivämäärä' },
+              ]}
+            />
+          </Container>
+          <Container size="sm" pr={90} mt={40}>
+            <Checkbox
+              label="Käänteinen"
+              checked={inverted}
+              onChange={(event) => setInverted(event.currentTarget.checked)}
+            />
+          </Container>
+        </Group>
+        <Stack mt={40}>
+          {latest.map((latestPaste) => (
+            <PasteCardVertical
+              language={
+                /* @ts-ignore */
+                latestPaste.programmingLanguage ? latestPaste.programmingLanguage : 'teksti'
+              }
+              title={latestPaste.title ? latestPaste.title : 'Nimetön...'}
+              date={new Date(latestPaste.date).toLocaleDateString('fi-FI')}
+              author={author}
+              id={latestPaste.id}
+              size={latestPaste.meta.size}
+              views={latestPaste.meta.views}
+            />
+          ))}
+        </Stack>
+      </Container>
     </>
   );
 }

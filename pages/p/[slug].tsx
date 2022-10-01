@@ -1,36 +1,73 @@
-import { Container, Title, Skeleton, Space, Divider, Grid, Text, Stack, LoadingOverlay } from '@mantine/core';
-import { useState } from 'react';
-import { Prism } from '@mantine/prism';
-import { useRouter } from 'next/router';
+import {
+  Container,
+  Divider,
+  Grid,
+  LoadingOverlay,
+  Skeleton,
+  Space,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { IconX, IconEye, IconEyeOff, IconFileDigit, IconCalendar, IconCode } from '@tabler/icons';
+import { Prism } from '@mantine/prism';
+import { IconCalendar, IconCode, IconEye, IconEyeOff, IconFileDigit, IconX } from '@tabler/icons';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 
-import { HeaderMenu } from '../../components/Header/HeaderMenu';
-import { PasteCardVertical } from '../../components/PasteCard/PasteCardVertical';
 import { Error } from '../../components/Error/Error';
+import { PasteCardVertical } from '../../components/PasteCard/PasteCardVertical';
 
-const Languages = ['go', 'markup', 'bash', 'clike', 'c', 'cpp', 'css', 'javascript', 'jsx', 'coffeescript', 'actionscript', 'css-extr', 'diff', 'git', 'graphql', 'handlebars', 'json', 'less', 'makefile', 'markdown', 'objectivec', 'ocaml', 'python', 'reason', 'sass', 'scss', 'sql', 'stylus', 'tsx', 'typescript', 'wasm', 'yaml'];
+const Languages = [
+  'go',
+  'markup',
+  'bash',
+  'clike',
+  'c',
+  'cpp',
+  'css',
+  'javascript',
+  'jsx',
+  'coffeescript',
+  'actionscript',
+  'css-extr',
+  'diff',
+  'git',
+  'graphql',
+  'handlebars',
+  'json',
+  'less',
+  'makefile',
+  'markdown',
+  'objectivec',
+  'ocaml',
+  'python',
+  'reason',
+  'sass',
+  'scss',
+  'sql',
+  'stylus',
+  'tsx',
+  'typescript',
+  'wasm',
+  'yaml',
+];
 export type Language = typeof Languages[number];
 
 interface PasteValue {
-  content: string,
-  title: string,
-  programmingLanguage: Language,
+  content: string;
+  title: string;
+  programmingLanguage: Language;
   meta: {
-    views: number,
-    size: number,
-  },
-  hidden: boolean,
-  date: string
+    views: number;
+    size: number;
+  };
+  hidden: boolean;
+  date: string;
 }
 
 export default function Paste() {
   const router = useRouter();
-  const links = [
-    { link: '/', label: 'Koti - Luo liite' },
-    { link: '/browse', label: 'Selaa liitteitä' },
-    { link: '/info', label: 'Tietoa meistä' },
-  ];
 
   const pasteDefault: PasteValue = {
     content: 'Ladataan...\n\n\n\n\n\nKestää hetken...',
@@ -76,12 +113,10 @@ export default function Paste() {
           newPaste = data;
 
           newPaste.programmingLanguage = newPaste.programmingLanguage
-
             ? newPaste.programmingLanguage
             : 'tsx';
 
           newPaste.programmingLanguage =
-
             newPaste.programmingLanguage === 'csharp' ? 'c' : newPaste.programmingLanguage;
           setPaste(newPaste);
           setPasteFound(true);
@@ -125,12 +160,9 @@ export default function Paste() {
               </Skeleton>
               <Space h="xl" />
               <Text size="sm" color="dimmed" sx={{ display: 'flex', gap: 8 }}>
-
                 {paste.hidden === true ? <IconEyeOff /> : <IconEye />}
                 {paste.meta.views} <IconFileDigit /> {paste.meta.size} tavua <IconCalendar />{' '}
-
                 {new Date(paste.date).toLocaleDateString('fi-FI')} <IconCode />{' '}
-
                 {paste.programmingLanguage}
               </Text>
               <Divider my="sm" />
@@ -175,18 +207,18 @@ export default function Paste() {
 
   function Page() {
     if (pasteFound) return <PastePage />;
-    return <Error
-      errorCode={404}
-      errorTitle="Liitettä ei ole olemassa."
-      errorText="Valitettavasti tätä liitettä ei löydy palvelimiltamme. Se on saatettu poistaa tai sitä ei
+    return (
+      <Error
+        errorCode={404}
+        errorTitle="Liitettä ei ole olemassa."
+        errorText="Valitettavasti tätä liitettä ei löydy palvelimiltamme. Se on saatettu poistaa tai sitä ei
     ole koskaan ollut."
-    />;
+      />
+    );
   }
 
   return (
     <>
-      {/* @ts-ignore */}
-      <HeaderMenu links={links} />
       <LoadingOverlay visible={!pasteFound} overlayBlur={5} />;
       <Page />
     </>
