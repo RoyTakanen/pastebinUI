@@ -1,7 +1,7 @@
-import { Container, Title, Select, Checkbox, Stack, Group } from '@mantine/core';
+import { Container, Title, Select, Checkbox, Stack, Group, Input } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { showNotification } from '@mantine/notifications';
-import { IconX, IconArrowsSort } from '@tabler/icons';
+import { IconX, IconArrowsSort, IconSearch } from '@tabler/icons';
 
 import { HeaderMenu } from '../components/Header/HeaderMenu';
 import { PasteCardVertical } from '../components/PasteCard/PasteCardVertical';
@@ -30,8 +30,8 @@ export default function Paste() {
   const [latest, setLatest] = useState(latestDefault);
   const [loadLatest, setLoadLatest] = useState(false);
 
-  const fetchPastes = (sorting: string, inverted: boolean) => {
-    fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/pastes?sorting=${inverted ? '-' : ''}${sorting}`)
+  const fetchPastes = (sorting: string, inverted: boolean, searchTerm: string = '') => {
+    fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/pastes?sorting=${inverted ? '-' : ''}${sorting}&title=${searchTerm}`)
     .then((response) => response.json())
     .then((data) => {
       if (data.error) {
@@ -62,16 +62,28 @@ export default function Paste() {
 
   const [sorting, setSorting] = useState<string | null>(null);
   const [inverted, setInverted] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    fetchPastes(sorting != null ? sorting : '', inverted);
-  }, [sorting, inverted]);
+    fetchPastes(sorting != null ? sorting : '', inverted, searchTerm);
+  }, [sorting, inverted, searchTerm]);
 
   function BrowsePage() {
     return (
       <>
         <Container px={0}>
             <Title>Selaa liitteitä</Title>
+            {/* This is rendered again when input changes (pls fix) */}
+            <Input
+              mt={30}
+              icon={<IconSearch />}
+              placeholder="Hae liitteitä"
+              size="md"
+              key="searchTerm"
+              autoFocus
+              value={searchTerm}
+              onChange={(event: any) => setSearchTerm(event.currentTarget.value)}
+            />
             <Group mb="xs">
             <Container size="sm" sx={{ flex: 1 }}>
                 <Select
