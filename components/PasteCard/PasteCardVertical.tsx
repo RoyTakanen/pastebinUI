@@ -1,4 +1,5 @@
-import { createStyles, Card, Avatar, Text, Group, Anchor } from '@mantine/core';
+import { Anchor, Avatar, Card, createStyles, Group, Text } from '@mantine/core';
+import { Language } from '../../utils/types';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -49,7 +50,7 @@ const humanFileSize = (bytes: number, si: boolean = false, dp: number = 1) => {
 };
 
 interface PasteCardVerticalProps {
-  language: string;
+  language: Language;
   title: string;
   date: string;
   author: {
@@ -62,30 +63,36 @@ interface PasteCardVerticalProps {
 }
 
 export function PasteCardVertical({
-  language, title, date, author, id, size, views,
+  language,
+  title,
+  date,
+  author,
+  id,
+  size,
+  views,
 }: PasteCardVerticalProps) {
   const { classes } = useStyles();
 
   const link = `/p/${id}`;
 
-  let extrameta = (<></>);
+  let extrameta = <></>;
   if (size && views) {
     extrameta = (
-          <>
-          <Text size="xs" color="dimmed">
-            •
-          </Text>
-          <Text size="xs" color="dimmed">
-            {humanFileSize(size || 0)}
-          </Text>
-          <Text size="xs" color="dimmed">
-            •
-          </Text>
-          <Text size="xs" color="dimmed">
-            {new Intl.NumberFormat('fi-FI').format(views || 0)} näyttökertaa
-          </Text>
-          </>
-        );
+      <>
+        <Text size="xs" color="dimmed">
+          •
+        </Text>
+        <Text size="xs" color="dimmed">
+          {humanFileSize(size || 0)}
+        </Text>
+        <Text size="xs" color="dimmed">
+          •
+        </Text>
+        <Text size="xs" color="dimmed">
+          {new Intl.NumberFormat('fi-FI').format(views || 0)} näyttökertaa
+        </Text>
+      </>
+    );
   }
 
   return (
