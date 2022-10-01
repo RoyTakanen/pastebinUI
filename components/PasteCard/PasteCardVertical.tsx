@@ -1,5 +1,5 @@
 import { Anchor, Avatar, Card, createStyles, Group, Text } from '@mantine/core';
-import { Language } from '../../utils/types';
+import { PasteValue } from '../../utils/types';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -28,49 +28,15 @@ const useStyles = createStyles((theme) => ({
  * @return Formatted string.
  */
 /* eslint-disable no-param-reassign */
-const humanFileSize = (bytes: number, si: boolean = false, dp: number = 1) => {
-  const thresh = si ? 1000 : 1024;
-
-  if (Math.abs(bytes) < thresh) {
-    return `${bytes} B`;
-  }
-
-  const units = si
-    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-  let u = -1;
-  const r = 10 ** dp;
-
-  do {
-    bytes /= thresh;
-    u += 1;
-  } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
-
-  return `${bytes.toFixed(dp)} ${units[u]}`;
-};
-
-interface PasteCardVerticalProps {
-  language: Language;
-  title: string;
-  date: string;
-  author: {
-    name: string;
-    avatar: string;
-  };
-  id: string;
-  size?: number;
-  views?: number;
-}
 
 export function PasteCardVertical({
-  language,
+  programmingLanguage: language,
   title,
   date,
   author,
   id,
-  size,
-  views,
-}: PasteCardVerticalProps) {
+  meta: { size, views },
+}: Omit<PasteValue, 'content' | 'hidden'>) {
   const { classes } = useStyles();
 
   const link = `/p/${id}`;
@@ -79,12 +45,6 @@ export function PasteCardVertical({
   if (size && views) {
     extrameta = (
       <>
-        <Text size="xs" color="dimmed">
-          •
-        </Text>
-        <Text size="xs" color="dimmed">
-          {humanFileSize(size || 0)}
-        </Text>
         <Text size="xs" color="dimmed">
           •
         </Text>

@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Container,
   Divider,
   Grid,
@@ -12,6 +13,7 @@ import {
 } from '@mantine/core';
 import { Prism } from '@mantine/prism';
 import { IconCalendar, IconEye, IconFileTypography, IconLock, IconLockOpen } from '@tabler/icons';
+import { convertBytesToHuman } from '../../utils/convertFileSize';
 import { PasteValue } from '../../utils/types';
 import { PasteCardVertical } from '../PasteCard/PasteCardVertical';
 
@@ -40,12 +42,21 @@ const defaultPaste: PasteValue = {
 
 const Paste = ({ paste = defaultPaste, loading = false, latestPastes = [] }: Props) => (
   <Container px={0}>
-    {/* <LoadingOverlay visible={loading} overlayBlur={5} /> */}
-
     <Grid gutter="xl">
       <Grid.Col span={8}>
-        <Skeleton visible={loading} animate height="35px">
-          <Title order={2}>{paste.title}</Title>
+        <Skeleton visible={loading} animate sx={{ minHeight: '80px' }}>
+          <Stack>
+            <Title order={2}>{paste.title}</Title>
+            <Group spacing="lg" noWrap>
+              <Text color="dimmed" weight="bold">
+                Lisännyt
+              </Text>
+              <Group spacing="xs" noWrap>
+                <Avatar size={20} src={paste.author.avatar} />
+                <Text size="xs">{paste.author.name}</Text>
+              </Group>
+            </Group>
+          </Stack>
         </Skeleton>
         <Space h="xl" />
         <Group position="apart" grow>
@@ -65,7 +76,7 @@ const Paste = ({ paste = defaultPaste, loading = false, latestPastes = [] }: Pro
               sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
             >
               <IconFileTypography />
-              {paste.meta.size} bytes
+              {convertBytesToHuman(paste.meta.size)}
             </Text>
           </Tooltip>
           <Tooltip label="Luomispäivä">
@@ -98,30 +109,32 @@ const Paste = ({ paste = defaultPaste, loading = false, latestPastes = [] }: Pro
             radius="sm"
             withLineNumbers
           >
-            {paste.content}
+            {paste.content || 'NO CONTENT'}
           </Prism>
         </Skeleton>
       </Grid.Col>
       <Grid.Col span={4}>
-        <Title order={3}>Uusimmat:</Title>
-        <Space h="xl" />
-        <Stack>
-          {latestPastes ? (
-            latestPastes.map((latest) => (
-              <PasteCardVertical
-                language={latest.programmingLanguage}
-                title={latest.title ? latest.title : 'Nimetön...'}
-                date={new Date(latest.date).toLocaleDateString('fi-FI')}
-                author={latest.author}
-                id={latest.id}
-                key={latest.id}
-              />
-            ))
-          ) : (
-            <Text>Tietoja ei löytynyt</Text>
-          )}
-        </Stack>
-        <Skeleton width="100%" height="100%" animate />
+        <Title order={3}>Uusimmat</Title>
+        <Divider my="lg" />
+        <Skeleton animate visible={loading}>
+          <Stack>
+            {latestPastes.length === 0 ? (
+              <Text>Tietoja ei löytynyt</Text>
+            ) : (
+              latestPastes.map((latest) => (
+                <PasteCardVertical
+                  programmingLanguage={latest.programmingLanguage}
+                  title={latest.title ? latest.title : 'Nimetön...'}
+                  date={new Date(latest.date).toLocaleDateString('fi-FI')}
+                  author={latest.author}
+                  meta={latest.meta}
+                  id={latest.id}
+                  key={latest.id}
+                />
+              ))
+            )}
+          </Stack>
+        </Skeleton>
       </Grid.Col>
     </Grid>
   </Container>

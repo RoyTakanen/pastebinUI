@@ -7,7 +7,7 @@ export const fetcher = async (endpoint: string) => {
   const values = await res.json();
 
   if (!res.ok) {
-    const error = new APIError(res.status, values.error.message, values.error.title);
+    const error = new APIError(res.status, values.data.message, values.data.title);
 
     throw error;
   }
