@@ -114,7 +114,7 @@ export default function Paste() {
             </Container>
             </Group>
             <Stack mt={40}>
-                    {latest.map((latestPaste) => (
+                {latest.map((latestPaste) => (
                     <PasteCardVertical
                       language={
                         /* @ts-ignore */
@@ -126,8 +126,9 @@ export default function Paste() {
                       id={latestPaste.id}
                       size={latestPaste.meta.size}
                       views={latestPaste.meta.views}
+                      key={latestPaste.id}
                     />
-                    ))}
+                ))}
             </Stack>
         </Container>
       </>

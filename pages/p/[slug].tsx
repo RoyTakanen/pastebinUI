@@ -162,6 +162,7 @@ export default function Paste() {
                     date={new Date(latestPaste.date).toLocaleDateString('fi-FI')}
                     author={author}
                     id={latestPaste.id}
+                    key={latestPaste.id}
                   />
                 ))}
               </Stack>
