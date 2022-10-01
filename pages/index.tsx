@@ -125,7 +125,7 @@ export default function HomePage() {
         <Checkbox
           label="Yksityinen"
           checked={privateValue}
-          onClick={(event) => onPrivateChange(event.currentTarget.checked)}
+          onChange={(event) => onPrivateChange(event.currentTarget.checked)}
         />
         <Space h="xl" />
         <Button
