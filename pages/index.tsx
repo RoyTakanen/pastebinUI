@@ -47,9 +47,9 @@ export default function HomePage() {
       .then((response) => response.json())
       .then((data) => {
         const newStats = structuredClone(stats);
-        newStats[0].stats = new Intl.NumberFormat('en-US', { notation: 'compact' }).format(data.totalViews);
-        newStats[1].stats = new Intl.NumberFormat('en-US', { notation: 'compact' }).format(data.pasteCount.public);
-        newStats[2].stats = new Intl.NumberFormat('en-US', { notation: 'compact' }).format(data.pasteCount.private);
+        newStats[0].stats = new Intl.NumberFormat('en-US', { notation: 'compact', maximumSignificantDigits: 2 }).format(data.totalViews);
+        newStats[1].stats = new Intl.NumberFormat('en-US', { notation: 'compact', maximumSignificantDigits: 2 }).format(data.pasteCount.public);
+        newStats[2].stats = new Intl.NumberFormat('en-US', { notation: 'compact', maximumSignificantDigits: 2 }).format(data.pasteCount.private);
         setStats(newStats);
         setStatsFetched(true);
       });
