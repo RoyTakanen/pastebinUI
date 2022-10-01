@@ -38,16 +38,21 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function ErrorNotFound() {
+interface ErrorProps {
+  errorCode: number;
+  errorTitle: string;
+  errorText: string;
+}
+
+export function Error({ errorCode, errorTitle, errorText }: ErrorProps) {
   const { classes } = useStyles();
 
   return (
     <Container className={classes.root}>
-      <div className={classes.label}>404</div>
-      <Title className={classes.title}>Liitettä ei ole olemassa.</Title>
+      <div className={classes.label}>{errorCode}</div>
+      <Title className={classes.title}>{errorTitle}</Title>
       <Text color="dimmed" size="lg" align="center" className={classes.description}>
-        Valitettavasti tätä liitettä ei löydy palvelimiltamme. Se on saatettu poistaa tai sitä ei
-        ole koskaan ollut.
+        {errorText}
       </Text>
       {/* <Group position="center">
         <Button variant="subtle" size="md">

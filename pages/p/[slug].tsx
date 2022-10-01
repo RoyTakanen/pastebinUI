@@ -7,7 +7,7 @@ import { IconX, IconEye, IconEyeOff, IconFileDigit, IconCalendar, IconCode } fro
 
 import { HeaderMenu } from '../../components/Header/HeaderMenu';
 import { PasteCardVertical } from '../../components/PasteCard/PasteCardVertical';
-import { ErrorNotFound } from '../../components/ErrorNotFound/ErrorNotFound';
+import { Error } from '../../components/Error/Error';
 
 const Languages = ['go', 'markup', 'bash', 'clike', 'c', 'cpp', 'css', 'javascript', 'jsx', 'coffeescript', 'actionscript', 'css-extr', 'diff', 'git', 'graphql', 'handlebars', 'json', 'less', 'makefile', 'markdown', 'objectivec', 'ocaml', 'python', 'reason', 'sass', 'scss', 'sql', 'stylus', 'tsx', 'typescript', 'wasm', 'yaml'];
 export type Language = typeof Languages[number];
@@ -174,7 +174,12 @@ export default function Paste() {
 
   function Page() {
     if (pasteFound) return <PastePage />;
-    return <ErrorNotFound />;
+    return <Error
+      errorCode={404}
+      errorTitle="Liitettä ei ole olemassa."
+      errorText="Valitettavasti tätä liitettä ei löydy palvelimiltamme. Se on saatettu poistaa tai sitä ei
+    ole koskaan ollut."
+    />;
   }
 
   return (
