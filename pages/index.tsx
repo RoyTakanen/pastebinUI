@@ -1,20 +1,73 @@
-import { Container, Space, Checkbox, TextInput, Button } from '@mantine/core';
+import { Container, Space, Checkbox, TextInput, Button, Alert } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Router from 'next/router';
 import hljs from 'highlight.js';
 import '@uiw/react-textarea-code-editor/dist.css';
-import { IconSend } from '@tabler/icons';
+import { IconSend, IconAlertCircle } from '@tabler/icons';
 import useSWR from 'swr';
 
 import { Welcome } from '../components/Welcome/Welcome';
 import { HeaderMenu } from '../components/Header/HeaderMenu';
 import { StatsGroup } from '../components/Stats/Stats';
 
+// @ts-ignore
+const fetcher = (...args) => fetch(...args).then((res) => res.json());
+
 const CodeEditor = dynamic(
   () => import('@uiw/react-textarea-code-editor').then((mod) => mod.default) as any,
   { ssr: false }
 );
+
+const MetricsComponent = () => {
+  const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/metrics`, fetcher);
+
+  if (error) {
+    return <Alert icon={<IconAlertCircle size={16} />} title="Virhe!" color="red" variant="filled">
+              Tilastojen lataus epäonnistui
+           </Alert>;
+  }
+  if (!data) {
+    // Modify the Component to show simple loader with loading property
+    return <StatsGroup data={[
+        {
+          title: 'Katselukertaa yhteensä',
+          stats: '0',
+          description: 'Kaikki liitteiden keräämät katselukerrat yhteensä.',
+        },
+        {
+          title: 'Julkista liitettä',
+          stats: '0',
+          description: 'Hakukoneissa ja listauksissa näkyvät liitteet.',
+        },
+        {
+          title: 'Yksityistä liitettä',
+          stats: '0',
+          description: 'Yksityisten liitteiden määrä (haussa näkymättömät liitteet).',
+        },
+      ]}
+    />;
+  }
+
+  return <StatsGroup data={[
+    {
+      title: 'Katselukertaa yhteensä',
+      stats: new Intl.NumberFormat('en-US', { notation: 'compact', maximumSignificantDigits: 2 }).format(data.totalViews),
+      description: 'Kaikki liitteiden keräämät katselukerrat yhteensä.',
+    },
+    {
+      title: 'Julkista liitettä',
+      stats: new Intl.NumberFormat('en-US', { notation: 'compact', maximumSignificantDigits: 2 }).format(data.pasteCount.public),
+      description: 'Hakukoneissa ja listauksissa näkyvät liitteet.',
+    },
+    {
+      title: 'Yksityistä liitettä',
+      stats: new Intl.NumberFormat('en-US', { notation: 'compact', maximumSignificantDigits: 2 }).format(data.pasteCount.private),
+      description: 'Yksityisten liitteiden määrä (haussa näkymättömät liitteet).',
+    },
+  ]}
+  />;
+};
 
 export default function HomePage() {
   const links = [
@@ -22,44 +75,6 @@ export default function HomePage() {
     { link: '/browse', label: 'Selaa liitteitä' },
     { link: '/info', label: 'Tietoa meistä' },
   ];
-
-  const statsDefault = [
-    {
-      title: 'Katselukertaa yhteensä',
-      stats: '0',
-      description: 'Kaikki liitteiden keräämät katselukerrat yhteensä.',
-    },
-    {
-      title: 'Julkista liitettä',
-      stats: '0',
-      description: 'Hakukoneissa ja listauksissa näkyvät liitteet.',
-    },
-    {
-      title: 'Yksityistä liitettä',
-      stats: '0',
-      description: 'Yksityisten liitteiden määrä (haussa näkymättömät liitteet).',
-    },
-  ];
-
-  // @ts-ignore
-  const fetcher = (...args) => fetch(...args).then((res) => res.json())
-
-  const { metricsData, metricsError } = useSWR('/metrics', fetcher)
-
-  const [stats, setStats] = useState(statsDefault);
-  const [statsFetched, setStatsFetched] = useState(false);
-  if (!statsFetched) {
-    fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/metrics`)
-      .then((response) => response.json())
-      .then((data) => {
-        const newStats = structuredClone(stats);
-        newStats[0].stats = new Intl.NumberFormat('en-US', { notation: 'compact', maximumSignificantDigits: 2 }).format(data.totalViews);
-        newStats[1].stats = new Intl.NumberFormat('en-US', { notation: 'compact', maximumSignificantDigits: 2 }).format(data.pasteCount.public);
-        newStats[2].stats = new Intl.NumberFormat('en-US', { notation: 'compact', maximumSignificantDigits: 2 }).format(data.pasteCount.private);
-        setStats(newStats);
-        setStatsFetched(true);
-      });
-  }
 
   const [pasteValue, onPasteChange] = useState('');
   const [titleValue, onTitleChange] = useState('');
@@ -144,7 +159,7 @@ export default function HomePage() {
         </Button>
         <Space h="xl" />
 
-        <StatsGroup data={stats} />
+        <MetricsComponent />
       </Container>
     </>
   );
