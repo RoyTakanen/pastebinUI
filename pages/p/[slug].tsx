@@ -1,4 +1,4 @@
-import { Container, Title, Skeleton, Space, Divider, Grid, Text, Stack } from '@mantine/core';
+import { Container, Title, Skeleton, Space, Divider, Grid, Text, Stack, LoadingOverlay } from '@mantine/core';
 import { useState } from 'react';
 import { Prism } from '@mantine/prism';
 import { useRouter } from 'next/router';
@@ -181,6 +181,7 @@ export default function Paste() {
     <>
       {/* @ts-ignore */}
       <HeaderMenu links={links} />
+      <LoadingOverlay visible={!pasteFound} overlayBlur={5} />;
       <Page />
     </>
   );
