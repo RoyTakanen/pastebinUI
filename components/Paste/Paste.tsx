@@ -43,7 +43,7 @@ const defaultPaste: PasteValue = {
 const Paste = ({ paste = defaultPaste, loading = false, latestPastes = [] }: Props) => (
   <Container px={0}>
     <Grid gutter="xl">
-      <Grid.Col span={8}>
+      <Grid.Col sm={8} xs={12}>
         <Skeleton visible={loading} animate sx={{ minHeight: '80px' }}>
           <Stack>
             <Title order={2}>{paste.title}</Title>
@@ -113,7 +113,7 @@ const Paste = ({ paste = defaultPaste, loading = false, latestPastes = [] }: Pro
           </Prism>
         </Skeleton>
       </Grid.Col>
-      <Grid.Col span={4}>
+      <Grid.Col sm={4} xs={12}>
         <Title order={3}>Uusimmat</Title>
         <Divider my="lg" />
         <Skeleton animate visible={loading}>
