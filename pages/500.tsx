@@ -10,7 +10,6 @@ export default function Custom500() {
 
   return (
     <>
-      {/* @ts-ignore */}
       <HeaderMenu links={links} />
       <Error
         errorCode={500}

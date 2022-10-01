@@ -1,4 +1,4 @@
-import { createStyles, Header, Menu, Group, Center, Burger, Container } from '@mantine/core';
+import { Burger, Center, Container, createStyles, Group, Header, Menu } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
 import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle';
@@ -44,7 +44,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface HeaderSearchProps {
-  links: { link: string; label: string; links: { link: string; label: string }[] }[];
+  links: { link: string; label: string; links?: { link: string; label: string }[] }[];
 }
 
 export function HeaderMenu({ links }: HeaderSearchProps) {
