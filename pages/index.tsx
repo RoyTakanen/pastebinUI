@@ -5,6 +5,7 @@ import Router from 'next/router';
 import hljs from 'highlight.js';
 import '@uiw/react-textarea-code-editor/dist.css';
 import { IconSend } from '@tabler/icons';
+import useSWR from 'swr';
 
 import { Welcome } from '../components/Welcome/Welcome';
 import { HeaderMenu } from '../components/Header/HeaderMenu';
@@ -39,6 +40,11 @@ export default function HomePage() {
       description: 'Yksityisten liitteiden määrä (haussa näkymättömät liitteet).',
     },
   ];
+
+  // @ts-ignore
+  const fetcher = (...args) => fetch(...args).then((res) => res.json())
+
+  const { metricsData, metricsError } = useSWR('/metrics', fetcher)
 
   const [stats, setStats] = useState(statsDefault);
   const [statsFetched, setStatsFetched] = useState(false);
