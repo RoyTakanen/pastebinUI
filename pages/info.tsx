@@ -90,6 +90,7 @@ export default function Paste() {
                 id={latestPaste.id}
                 size={latestPaste.meta.size}
                 views={latestPaste.meta.views}
+                key={latestPaste.id}
               />
             ))}
           </Stack>
