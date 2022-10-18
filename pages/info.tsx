@@ -95,7 +95,7 @@ export default function Paste() {
         <Stack mt={40}>
           {latest.map((latestPaste) => (
             <PasteCardVertical
-              language={
+              programmingLanguage={
                 /* @ts-ignore */
                 latestPaste.programmingLanguage ? latestPaste.programmingLanguage : 'teksti'
               }
@@ -103,8 +103,7 @@ export default function Paste() {
               date={new Date(latestPaste.date).toLocaleDateString('fi-FI')}
               author={author}
               id={latestPaste.id}
-              size={latestPaste.meta.size}
-              views={latestPaste.meta.views}
+              meta={latestPaste.meta}
             />
           ))}
         </Stack>
