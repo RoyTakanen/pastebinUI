@@ -72,17 +72,11 @@ export default function Paste() {
             icon: <IconX size={20} />,
           });
         } else {
-          let newPaste = structuredClone(paste);
-          newPaste = data;
+          const newPaste = {
+            ...data,
+            programmingLanguage: (data.programmingLanguage === 'csharp' ? 'c' : data.programmingLanguage) ?? 'tsx',
+          };
 
-          newPaste.programmingLanguage = newPaste.programmingLanguage
-
-            ? newPaste.programmingLanguage
-            : 'tsx';
-
-          newPaste.programmingLanguage =
-
-            newPaste.programmingLanguage === 'csharp' ? 'c' : newPaste.programmingLanguage;
           setPaste(newPaste);
           setPasteFound(true);
         }
@@ -100,9 +94,7 @@ export default function Paste() {
             icon: <IconX size={20} />,
           });
         } else {
-          let newLatest = structuredClone(latest);
-          newLatest = data;
-          setLatest(newLatest);
+          setLatest(data);
           setLoadLatest(true);
         }
       });
