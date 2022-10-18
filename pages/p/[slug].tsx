@@ -179,7 +179,7 @@ export default function Paste() {
     <>
       {/* @ts-ignore */}
       <HeaderMenu links={links} />
-      <LoadingOverlay visible={!pasteFound} overlayBlur={5} />;
+      <LoadingOverlay visible={!pasteFound} overlayBlur={5} />
       <Page />
     </>
   );
