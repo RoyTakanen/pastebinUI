@@ -30,6 +30,7 @@ export function PasteCardVertical({
   const link = `/p/${id}`;
 
   let extrameta = <></>;
+
   if (size && views) {
     extrameta = (
       <>
