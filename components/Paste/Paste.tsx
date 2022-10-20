@@ -66,7 +66,7 @@ const Paste = ({ paste = defaultPaste, loading = false, latestPastes = [] }: Pro
           </Stack>
         </Skeleton>
         <Space h="xl" />
-        <Group position="apart" grow>
+        <Group position="apart">
           <Tooltip label="Näyttökerrat">
             <Text
               size="sm"
