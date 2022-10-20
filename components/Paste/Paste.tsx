@@ -12,7 +12,14 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { Prism } from '@mantine/prism';
-import { IconCalendar, IconEye, IconFileTypography, IconLock, IconLockOpen } from '@tabler/icons';
+import {
+  IconCalendar,
+  IconCode,
+  IconEye,
+  IconFileTypography,
+  IconLock,
+  IconLockOpen,
+} from '@tabler/icons';
 import { convertBytesToHuman } from '../../utils/convertFileSize';
 import { PasteValue } from '../../utils/types';
 import { PasteCardVertical } from '../PasteCard/PasteCardVertical';
@@ -41,7 +48,7 @@ const defaultPaste: PasteValue = {
 };
 
 const Paste = ({ paste = defaultPaste, loading = false, latestPastes = [] }: Props) => (
-  <Container px={0}>
+  <Container px={0} sx={{ maxWidth: '95vw' }}>
     <Grid gutter="xl">
       <Grid.Col md={8} xs={12}>
         <Skeleton visible={loading} animate sx={{ minHeight: '80px' }}>
@@ -87,6 +94,16 @@ const Paste = ({ paste = defaultPaste, loading = false, latestPastes = [] }: Pro
             >
               <IconCalendar />
               {new Date(paste.date).toLocaleDateString('fi-FI')}
+            </Text>
+          </Tooltip>
+          <Tooltip label="Tiedoston kieli">
+            <Text
+              size="sm"
+              color="dimmed"
+              sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+            >
+              <IconCode />
+              {paste.programmingLanguage || 'markup'}
             </Text>
           </Tooltip>
           <Tooltip label="Hidden">

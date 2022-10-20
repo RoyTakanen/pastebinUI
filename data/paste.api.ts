@@ -1,18 +1,43 @@
-import useSWR from 'swr';
-import useSWRImmutable from 'swr/immutable';
 import { APIError } from '../utils/APIError';
 import { PasteValue } from '../utils/types';
 import { fetcher } from './helpers';
 
-export const useGetPaste = (id: string) =>
-  useSWRImmutable<PasteValue, APIError>(`/pastes/${id}`, fetcher, {
-    errorRetryCount: 3,
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
+export const getPaste = async (
+  id: string
+): Promise<{
+  error: APIError | null;
+  data: PasteValue | null;
+}> => {
+  const res = await fetcher<PasteValue>(`/pastes/${id}`);
 
-export const useGetLatestPastes = () =>
-  useSWR<PasteValue[], APIError>('/pastes?sorting=-date', fetcher, {
-    errorRetryCount: 3,
-    revalidateOnFocus: true,
-  });
+  if (res instanceof APIError) {
+    return {
+      error: res,
+      data: null,
+    };
+  }
+
+  return {
+    error: null,
+    data: res,
+  };
+};
+
+export const getLatestPastes = async (): Promise<{
+  error: APIError | null;
+  data: PasteValue[] | null;
+}> => {
+  const res = await fetcher<PasteValue[]>('/pastes?sorting=-date');
+
+  if (res instanceof APIError) {
+    return {
+      error: res,
+      data: null,
+    };
+  }
+
+  return {
+    error: null,
+    data: res,
+  };
+};

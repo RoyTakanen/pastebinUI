@@ -2,7 +2,7 @@ import { APIError } from '../utils/APIError';
 
 export const API_URL = process.env.NEXT_PUBLIC_API_ENDPOINT;
 
-export const fetcher = async (endpoint: string) => {
+export const fetcher = async <DATA>(endpoint: string): Promise<DATA | APIError> => {
   const res = await fetch(API_URL + endpoint);
   const values = await res.json();
 
