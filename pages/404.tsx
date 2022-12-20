@@ -1,0 +1,11 @@
+import { Error } from '../components/Error/Error';
+
+export default function Custom404() {
+  return (
+    <Error
+      errorCode={404}
+      errorTitle="Sivua ei ole olemassa"
+      errorText="Sivu on joko poistettu tai se ei ole koskaan ollut olemassa. Tarkasta osoite uudestaan tai siirry etusivulle."
+    />
+  );
+}

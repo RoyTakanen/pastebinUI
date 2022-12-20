@@ -1,121 +1,124 @@
-import { Container, Title, Stack, Input } from '@mantine/core';
-import { useState, useEffect } from 'react';
-import { showNotification } from '@mantine/notifications';
-import { IconX, IconSearch } from '@tabler/icons';
-
-import { HeaderMenu } from '../components/Header/HeaderMenu';
+import { Checkbox, Container, Group, Select, Stack, Text, Title } from '@mantine/core';
+import { IconArrowsSort } from '@tabler/icons';
+import { GetServerSideProps } from 'next';
+import { useState } from 'react';
+import { Error } from '../components/Error/Error';
 import { PasteCardVertical } from '../components/PasteCard/PasteCardVertical';
-import { SortingMethod, SortingSelector } from '../components/SortingSelector/SortingSelector';
+import { getLatestPastes } from '../data/paste.api';
+import { APIError } from '../utils/APIError';
+import { PasteValue } from '../utils/types';
 
-export default function Paste() {
-  const links = [
-    { link: '/', label: 'Koti - Luo liite' },
-    { link: '/browse', label: 'Selaa liitteitä' },
-    { link: '/info', label: 'Tietoa meistä' },
-  ];
-
-  const latestDefault = [
-    {
-      author: 'Tuntematon Sotilas',
-      date: '2022-08-04T12:57:22.810Z',
-      title: 'Python-esimerkki',
-      language: 'python',
-      id: 'XXXXXX',
-      meta: {
-        size: 1,
-        views: 1,
-      },
-    },
-  ];
-
-  const [latest, setLatest] = useState(latestDefault);
-  const [loadLatest, setLoadLatest] = useState(false);
-
-  const fetchPastes = (sorting: string, inverted: boolean, searchTerm: string = '') => {
-    fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/pastes?sorting=${inverted ? '-' : ''}${sorting}&title=${searchTerm}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          showNotification({
-            color: 'red',
-            message: data.error,
-            disallowClose: true,
-            icon: <IconX size={20} />,
-          });
-        } else {
-          setLatest(data);
-          setLoadLatest(true);
-        }
-      });
-  };
-
-  if (!loadLatest) {
-    fetchPastes('meta.views', true);
+export default function Pastes({
+  data,
+  error,
+}: {
+  data: PasteValue[] | null;
+  error: APIError | null;
+}) {
+  if (error) {
+    return <Error errorCode={error.status} errorTitle={error.title} errorText={error.message} />;
   }
 
-  const author = {
-    name: 'tuntematon',
-    avatar:
-      'https://images.unsplash.com/photo-1534294668821-28a3054f4256?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80',
+  if (!data) return <Text color="dimmed">Ei tietoa</Text>;
+
+  const [sorting, setSorting] = useState<string | null>('meta.views');
+  const [inverted, setInverted] = useState(false);
+
+  const sortingAlgos = {
+    'meta.views': (a: PasteValue, b: PasteValue) => b.meta.views - a.meta.views,
+    'meta.size': (a: PasteValue, b: PasteValue) => b.meta.size - a.meta.size,
+    date: (a: PasteValue, b: PasteValue) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   };
 
-  const [sorting, setSorting] = useState<SortingMethod | null>(null);
-  const [inverted, setInverted] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const getSortingAlgo = (sort: string | null): 'meta.views' | 'meta.size' | 'date' => {
+    switch (sort) {
+      case 'meta.size':
+        return 'meta.size';
 
-  useEffect(() => {
-    fetchPastes(sorting != null ? sorting : '', inverted, searchTerm);
-  }, [sorting, inverted, searchTerm]);
+      case 'date':
+        return 'date';
 
-  function BrowsePage() {
-    return (
-      <>
-        <Container px={0}>
-          <Title>Selaa liitteitä</Title>
-          {/* This is rendered again when input changes (pls fix) */}
-          <Input
-            mt={30}
-            icon={<IconSearch />}
-            placeholder="Hae liitteitä"
-            size="md"
-            key="searchTerm"
-            autoFocus
-            value={searchTerm}
-            onChange={(event: any) => setSearchTerm(event.currentTarget.value)}
-          />
-          <SortingSelector
-            sorting={sorting}
-            setSorting={setSorting}
-            inverted={inverted}
-            setInverted={setInverted}
-          />
-          <Stack mt={40}>
-            {latest.map((latestPaste) => (
-              <PasteCardVertical
-                language={
-                  /* @ts-ignore */
-                  latestPaste.programmingLanguage ? latestPaste.programmingLanguage : 'teksti'
-                }
-                title={latestPaste.title ? latestPaste.title : 'Nimetön...'}
-                date={new Date(latestPaste.date).toLocaleDateString('fi-FI')}
-                author={author}
-                id={latestPaste.id}
-                size={latestPaste.meta.size}
-                views={latestPaste.meta.views}
-                key={latestPaste.id}
-              />
-            ))}
-          </Stack>
-        </Container>
-      </>
-    );
+      case 'meta.views':
+      case null:
+      default:
+        return 'meta.views';
+    }
+  };
+
+  let sortedData: PasteValue[] = [];
+
+  if (inverted) {
+    sortedData = [...data].sort(sortingAlgos[getSortingAlgo(sorting)]).reverse();
+  } else {
+    sortedData = [...data].sort(sortingAlgos[getSortingAlgo(sorting)]);
   }
 
   return (
-    <>
-      {/* @ts-ignore */}
-      <HeaderMenu links={links} />
-      <BrowsePage />
-    </>
+    <Container px={0}>
+      <Title>Selaa liitteitä</Title>
+      <Group mb="xs">
+        <Container size="sm" px={0} sx={{ flex: 1 }}>
+          <Select
+            mt={20}
+            transition="pop-top-left"
+            transitionDuration={80}
+            transitionTimingFunction="ease"
+            value={sorting}
+            onChange={setSorting}
+            label="Lajitteluperuste"
+            placeholder="Valitse yksi"
+            icon={<IconArrowsSort size={14} />}
+            defaultValue="meta.views"
+            data={[
+              { value: 'meta.views', label: 'Katselukerrat' },
+              { value: 'meta.size', label: 'Koko' },
+              { value: 'date', label: 'Päivämäärä' },
+            ]}
+          />
+        </Container>
+        <Container size="sm" pr={90} mt={40}>
+          <Checkbox
+            label="Käänteinen"
+            checked={inverted}
+            onChange={(event) => setInverted(event.currentTarget.checked)}
+          />
+        </Container>
+      </Group>
+      <Stack mt={40}>
+        {sortedData.map((latestPaste) => (
+          <PasteCardVertical
+            programmingLanguage={
+              latestPaste.programmingLanguage ? latestPaste.programmingLanguage : 'markup'
+            }
+            title={latestPaste.title ? latestPaste.title : 'Nimetön...'}
+            date={new Date(latestPaste.date).toLocaleDateString('fi-FI')}
+            author={latestPaste.author}
+            id={latestPaste.id}
+            meta={latestPaste.meta}
+            key={latestPaste.id}
+          />
+        ))}
+      </Stack>
+    </Container>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const { data, error } = await getLatestPastes();
+
+  if (error) {
+    return {
+      props: {
+        error,
+        data: null,
+      },
+    };
+  }
+
+  return {
+    props: {
+      data,
+      error: null,
+    },
+  };
+};

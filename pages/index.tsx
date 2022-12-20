@@ -1,15 +1,22 @@
-import { Container, Space, Checkbox, TextInput, Button, Alert, LoadingOverlay } from '@mantine/core';
-import { useState, useEffect } from 'react';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Container,
+  LoadingOverlay,
+  Space,
+  TextInput,
+} from '@mantine/core';
+import { IconAlertCircle, IconSend } from '@tabler/icons';
+import '@uiw/react-textarea-code-editor/dist.css';
+import hljs from 'highlight.js';
 import dynamic from 'next/dynamic';
 import Router from 'next/router';
-import hljs from 'highlight.js';
-import '@uiw/react-textarea-code-editor/dist.css';
-import { IconSend, IconAlertCircle } from '@tabler/icons';
+import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 
-import { Welcome } from '../components/Welcome/Welcome';
-import { HeaderMenu } from '../components/Header/HeaderMenu';
 import { StatsGroup } from '../components/Stats/Stats';
+import { Welcome } from '../components/Welcome/Welcome';
 
 // @ts-ignore
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
@@ -23,59 +30,70 @@ const MetricsComponent = () => {
   const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/metrics`, fetcher);
 
   if (error) {
-    return <Alert icon={<IconAlertCircle size={16} />} title="Virhe!" color="red" variant="filled">
-              Tilastojen lataus epäonnistui
-           </Alert>;
+    return (
+      <Alert icon={<IconAlertCircle size={16} />} title="Virhe!" color="red" variant="filled">
+        Tilastojen lataus epäonnistui
+      </Alert>
+    );
   }
   if (!data) {
     // Modify the Component to show simple loader with loading property
-    return <StatsGroup data={[
+    return (
+      <StatsGroup
+        data={[
+          {
+            title: 'Katselukertaa yhteensä',
+            stats: '0',
+            description: 'Kaikki liitteiden keräämät katselukerrat yhteensä.',
+          },
+          {
+            title: 'Julkista liitettä',
+            stats: '0',
+            description: 'Hakukoneissa ja listauksissa näkyvät liitteet.',
+          },
+          {
+            title: 'Yksityistä liitettä',
+            stats: '0',
+            description: 'Yksityisten liitteiden määrä (haussa näkymättömät liitteet).',
+          },
+        ]}
+      />
+    );
+  }
+
+  return (
+    <StatsGroup
+      data={[
         {
           title: 'Katselukertaa yhteensä',
-          stats: '0',
+          stats: new Intl.NumberFormat('en-US', {
+            notation: 'compact',
+            maximumSignificantDigits: 2,
+          }).format(data.totalViews),
           description: 'Kaikki liitteiden keräämät katselukerrat yhteensä.',
         },
         {
           title: 'Julkista liitettä',
-          stats: '0',
+          stats: new Intl.NumberFormat('en-US', {
+            notation: 'compact',
+            maximumSignificantDigits: 2,
+          }).format(data.pasteCount.public),
           description: 'Hakukoneissa ja listauksissa näkyvät liitteet.',
         },
         {
           title: 'Yksityistä liitettä',
-          stats: '0',
+          stats: new Intl.NumberFormat('en-US', {
+            notation: 'compact',
+            maximumSignificantDigits: 2,
+          }).format(data.pasteCount.private),
           description: 'Yksityisten liitteiden määrä (haussa näkymättömät liitteet).',
         },
       ]}
-    />;
-  }
-
-  return <StatsGroup data={[
-    {
-      title: 'Katselukertaa yhteensä',
-      stats: new Intl.NumberFormat('en-US', { notation: 'compact', maximumSignificantDigits: 2 }).format(data.totalViews),
-      description: 'Kaikki liitteiden keräämät katselukerrat yhteensä.',
-    },
-    {
-      title: 'Julkista liitettä',
-      stats: new Intl.NumberFormat('en-US', { notation: 'compact', maximumSignificantDigits: 2 }).format(data.pasteCount.public),
-      description: 'Hakukoneissa ja listauksissa näkyvät liitteet.',
-    },
-    {
-      title: 'Yksityistä liitettä',
-      stats: new Intl.NumberFormat('en-US', { notation: 'compact', maximumSignificantDigits: 2 }).format(data.pasteCount.private),
-      description: 'Yksityisten liitteiden määrä (haussa näkymättömät liitteet).',
-    },
-  ]}
-  />;
+    />
+  );
 };
 
 export default function HomePage() {
-  const links = [
-    { link: '/', label: 'Koti - Luo liite' },
-    { link: '/browse', label: 'Selaa liitteitä' },
-    { link: '/info', label: 'Tietoa meistä' },
-  ];
-
   const [pasteValue, onPasteChange] = useState('');
   const [titleValue, onTitleChange] = useState('');
   const [languageValue, onLanguageChange] = useState('js');
@@ -118,8 +136,6 @@ export default function HomePage() {
 
   return (
     <>
-      {/* @ts-ignore */}
-      <HeaderMenu links={links} />
       <Welcome />
       <Space h="xl" />
       <Container style={{ position: 'relative' }}>
