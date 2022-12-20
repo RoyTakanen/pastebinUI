@@ -35,9 +35,7 @@ export default function Paste() {
             icon: <IconX size={20} />,
           });
         } else {
-          let newLatest = structuredClone(latest);
-          newLatest = data;
-          setLatest(newLatest);
+          setLatest(data);
           setLoadLatest(true);
         }
       });
